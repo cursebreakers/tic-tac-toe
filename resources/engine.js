@@ -21,6 +21,7 @@ function loadEngine() {
     const startButton = document.getElementById("startButton");
     const message = document.getElementById("message");
     const board = document.getElementById("board");
+    const tray = document.getElementById('gameTray')
 
     
     // Check if the startButton element exists
@@ -35,7 +36,7 @@ function loadEngine() {
         console.log('Engine: Initialized');  
         // Update game message
         if (message) {
-            message.textContent = "Loading...";
+            message.textContent = "Game Setup";
         }
         //Clear game board
         if (board) {
@@ -43,29 +44,29 @@ function loadEngine() {
         }
         // Reset Button
         if (startButton) {
-            startButton.textContent = "Reset Engine";
+            startButton.textContent = "Reboot";
         }
 
-        // Report game engine status
-        console.log('Engine: Running character creation...'); 
+        function setupPlayers() {
+          // Report game engine status
+          console.log('Engine: Running character creation...'); 
 
-        // Create input elements for player names and choices
-        const player1NameIn = document.createElement("input");
-        player1NameIn.placeholder = "Enter Player 1's name";
-        const player1Choice = document.createElement("select");
-        player1Choice.innerHTML = '<option value="x">X</option><option value="o">O</option>';
+          // Create input elements for player names and choices
+          const player1NameIn = document.createElement("input");
+          player1NameIn.placeholder = "Enter Player 1's name";
+          const player1Choice = document.createElement("select");
+          player1Choice.innerHTML = '<option value="x">X</option><option value="o">O</option>';
 
-        const player2NameIn = document.createElement("input");
-        player2NameIn.placeholder = "Enter Player 2's name";
-        const player2Choice = document.createElement("select");
-        player2Choice.innerHTML = '<option value="x">X</option><option value="o" selected>O</option>';
-
+          const player2NameIn = document.createElement("input");
+          player2NameIn.placeholder = "Enter Player 2's name";
+          const player2Choice = document.createElement("select");
+          player2Choice.innerHTML = '<option value="x">X</option><option value="o" selected>O</option>';
             // Add the input elements to the board
-            if (board) {
-                board.appendChild(player1NameIn);
-                board.appendChild(player1Choice);
-                board.appendChild(player2NameIn);
-                board.appendChild(player2Choice);
+            if (tray) {
+                tray.appendChild(player1NameIn);
+                tray.appendChild(player1Choice);
+                tray.appendChild(player2NameIn);
+                tray.appendChild(player2Choice);
         
                 // Add a button to start the game after collecting inputs
                 const playButton = document.createElement("button");
@@ -77,13 +78,16 @@ function loadEngine() {
                     const player2Piece = player2Choice.value;
         
                     // Check if inputs are valid (you can add validation logic here)
-        
+
                     // Now you have player names and choices, continue with the game setup
                         runGame(player1Name, player1Piece, player2Name, player2Piece);
                     });
         
-                    board.appendChild(playButton);
+                    tray.appendChild(playButton);
                 }
+            }
+
+        setupPlayers()           
 
     function runGame(player1Name, player1Piece, player2Name, player2Piece) {
         console.log(player1Piece, player1Name)
