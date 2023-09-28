@@ -23,7 +23,6 @@ function loadEngine() {
     const board = document.getElementById("board");
     const tray = document.getElementById('gameTray')
 
-    
     // Check if the startButton element exists
     if (startButton) {
         startButton.addEventListener("click", initGame);
@@ -36,7 +35,7 @@ function loadEngine() {
         console.log('Engine: Initialized');  
         // Update game message
         if (message) {
-            message.textContent = "Game Setup";
+            message.textContent = "Player select";
         }
         //Clear game board
         if (board) {
@@ -45,6 +44,9 @@ function loadEngine() {
         // Reset Button
         if (startButton) {
             startButton.textContent = "Reboot";
+            startButton.addEventListener("click", () => {
+                location.reload(); // Reload the page when the button is clicked
+            });
         }
 
         function setupPlayers() {
@@ -77,10 +79,27 @@ function loadEngine() {
                     const player2Name = player2NameIn.value;
                     const player2Piece = player2Choice.value;
         
-                    // Check if inputs are valid (you can add validation logic here)
-
+                // Check if inputs are valid
+                if (player1Piece !== "x" && player2Piece !== "x") {
+                    alert("Player 1 must select either 'X' or 'O' as their piece.");
+                    return; // Exit the function if the piece is invalid
+                }
+                if (player1Piece !== "o" && player2Piece !== "o") {
+                   alert("Player 2 must select either 'X' or 'O' as their piece.");
+                   return; // Exit the function if the piece is invalid
+}
                     // Now you have player names and choices, continue with the game setup
                         runGame(player1Name, player1Piece, player2Name, player2Piece);
+                        
+                        // Remove the player select inputs from the tray
+                        if (tray) {
+                            tray.removeChild(player1NameIn);
+                            tray.removeChild(player1Choice);
+                            tray.removeChild(player2NameIn);
+                            tray.removeChild(player2Choice);
+                            tray.removeChild(playButton);
+                        }
+                        
                     });
         
                     tray.appendChild(playButton);
