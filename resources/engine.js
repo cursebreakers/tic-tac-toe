@@ -56,13 +56,17 @@ function loadEngine() {
             });
             
             setupPlayers();
-            createBoard();            
         }
     }    
 
     function setupPlayers() {
         // Report game engine status
         console.log('Engine: Running player creation...'); 
+        // Create a div to contain player inputs
+        const playerInputsDiv = document.createElement("div");
+
+        // Get the gamePanel div by its ID
+        const gamePanel = document.getElementById("gamePanel");
 
         // Create input elements for player names and choices
         const player1NameIn = document.createElement("input");
@@ -74,29 +78,27 @@ function loadEngine() {
         player2NameIn.placeholder = "Enter Player 2's name";
         const player2Choice = document.createElement("select");
         player2Choice.innerHTML = '<option value="x">X</option><option value="o" selected>O</option>';
-            
-        // Add the input elements to the board
-        if (tray) {
-            tray.appendChild(player1NameIn);
-            tray.appendChild(player1Choice);
-            tray.appendChild(player2NameIn);
-            tray.appendChild(player2Choice);
-        
-            // Add a button to start the game after collecting inputs
-            const playButton = document.createElement("button");
-            playButton.textContent = "Play!";
-            playButton.addEventListener("click", () => {
-                const player1Name = player1NameIn.value;
-                const player1Piece = player1Choice.value;
-                const player2Name = player2NameIn.value;
-                const player2Piece = player2Choice.value;
-        
-                // Check if inputs are valid
-                if (!player1Name || !player2Name) {
-                    alert("Both players must enter their names.");
-                    return;
-                }
 
+        // Add the input elements to the playerInputsDiv
+        playerInputsDiv.appendChild(player1NameIn);
+        playerInputsDiv.appendChild(player1Choice);
+        playerInputsDiv.appendChild(player2NameIn);
+        playerInputsDiv.appendChild(player2Choice);
+        
+        // Add a button to start the game after collecting inputs
+        const playButton = document.createElement("button");
+        playButton.textContent = "Play!";
+        playButton.addEventListener("click", () => {
+            const player1Name = player1NameIn.value;
+            const player1Piece = player1Choice.value;
+            const player2Name = player2NameIn.value;
+            const player2Piece = player2Choice.value;
+        
+            // Check if inputs are valid
+            if (!player1Name || !player2Name) {
+                alert("Both players must enter their names.");
+                return;
+            }
                 // Now you have player names and choices, continue with the game setup
                 gameState.player1 = { name: player1Name, piece: player1Piece };
                 gameState.player2 = { name: player2Name, piece: player2Piece };
@@ -104,13 +106,22 @@ function loadEngine() {
                 gameState.boardState = initializeBoard();
                 gameState.gameEnded = false;
 
+                // Hide the player inputs div
+                playerInputsDiv.style.display = "none";
+                playButton.style.display = "none";
+                message.textContent = "Players confirmed"
+
                 runGame();
             });
 
-            tray.appendChild(playButton);
+        // Add the playerInputsDiv and playButton to the gamePanel
+        if (gamePanel) {
+            gamePanel.appendChild(playerInputsDiv);
+            gamePanel.appendChild(playButton);
+            message.textContent = "Player select"
+
         }
     }
-
             
     // Initialize the game board
     function createBoard() {
@@ -127,6 +138,7 @@ function loadEngine() {
                 board.appendChild(cell);
                 rowArray.push(null);
             }
+
             gameState.boardState.push(rowArray);
         }
     }
@@ -175,7 +187,6 @@ function loadEngine() {
         }
         console.log('Game ready')
     }
-
 
     function handleCellClick(event) {
         console.log('clicking cell...')

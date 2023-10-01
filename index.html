@@ -9,13 +9,14 @@
         <script src="./resources/js.js" defer></script>
     </head>
     <body>
-        <h1>Tic-Tac-Toe v0.9</h1>
-        <nav>
-            <button onclick="window.location.href='./index.html';">Home</button>
+        <h1 id="header">Tic-Tac-Toe v0.9</h1>
+        <nav id="bar">
+            <button onclick="window.location.href='index.html';">Home</button>
             <button onclick="window.location.href='https://cursebreakers.editorx.io/portfolio';">More from Cursebreakers</button>
+            <div>v0.9</div>
         </nav>
+        <h2 id="message">Let's play!</h2>
         <div class="gameTray" id="gameBoard">
-            <h2>Let's play!</h2>
             <div class="gameAction"></div>
             <button id="playBtn" onclick="window.location.href='./resources/pages/play.html';">Enter</button>
         </div>

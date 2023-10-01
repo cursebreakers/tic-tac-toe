@@ -9,18 +9,21 @@
     <script src="../engine.js" defer></script>
 </head>
 <body>
-    <h1>Tic-Tac-Toe v0.9</h1>
-    <nav>
+    <h1 id="header">Tic-Tac-Toe v0.9</h1>
+    <nav id="bar">
         <button onclick="window.location.href='../../index.html';">Home</button>
         <button onclick="window.location.href='https://cursebreakers.editorx.io/portfolio';">More from Cursebreakers</button>
-        <h2>v0.9</h2>
+        <div>v0.9</div>
     </nav>
-    <div class="message" id="message">Click "Start" to begin!</div>
+    <button id="startButton">Start</button>
+    <h2 class="message" id="message">Click "Start" to begin!</h2>
+    <div id="gamePanel"></div>
     <div class="tray" id="gameTray">
       <div class="gameAction" id="board"></div>
-      <div class="gameControl">
-        <button id="startButton">Start</button>
       </div>
     </div>
+    <footer class="footer">
+      <p>Special thanks to the Odin Project for this exercise!</p>
+    </footer>
 </body>
 </html>
