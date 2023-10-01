@@ -9,7 +9,7 @@ window.addEventListener("load", (event) => {
 
 // Game loader function
 function loadEngine() {
-    console.log('Engine: Online')
+    console.log('Engine: Waiting...')
 
     const gameTray = document.getElementById("gameTray");
     
@@ -51,7 +51,7 @@ function loadEngine() {
 
         function setupPlayers() {
           // Report game engine status
-          console.log('Engine: Running character creation...'); 
+          console.log('Engine: Running player creation...'); 
 
           // Create input elements for player names and choices
           const player1NameIn = document.createElement("input");
@@ -80,16 +80,13 @@ function loadEngine() {
                     const player2Piece = player2Choice.value;
         
                 // Check if inputs are valid
-                if (player1Piece !== "x" && player2Piece !== "x") {
-                    alert("Player 1 must select either 'X' or 'O' as their piece.");
-                    return; // Exit the function if the piece is invalid
+                if (!player1Name || !player2Name) {
+                    alert("Both players must enter their names.");
+                    return;
                 }
-                if (player1Piece !== "o" && player2Piece !== "o") {
-                   alert("Player 2 must select either 'X' or 'O' as their piece.");
-                   return; // Exit the function if the piece is invalid
-}
+
                     // Now you have player names and choices, continue with the game setup
-                        runGame(player1Name, player1Piece, player2Name, player2Piece);
+                    runGame(player1Name, player1Piece, player2Name, player2Piece);
                         
                         // Remove the player select inputs from the tray
                         if (tray) {
@@ -101,8 +98,7 @@ function loadEngine() {
                         }
                         
                     });
-        
-                    tray.appendChild(playButton);
+                            tray.appendChild(playButton);
                 }
             }
 
@@ -147,21 +143,73 @@ function loadEngine() {
                 board.appendChild(cell);
             }
         }
+    }
+
+    let currentPlayer = 1; // Player 1 starts
+
 
     function handleCellClick(event) {
+        console.log('clicking cell...')
         const cell = event.target;
         const row = cell.dataset.row;
         const col = cell.dataset.col;
-        // Implement your logic for handling the player's move here
-        // You can update the cell's content with the player's piece (x or o)
-        // Check for a win or a draw and update the message accordingly
+        
+        // Check if the cell is already occupied
+        if (cell.textContent !== '') {
+            return; // Cell is already occupied, do nothing
         }
+        
+        // Mark the cell with the current player's piece
+        cell.textContent = currentPlayer === 1 ? 'X' : 'O';
+
+        // Check if the current player has won
+        if (checkWin(currentPlayer === 1 ? 'X' : 'O', row, col)) {
+            message.textContent = `Player ${currentPlayer} (${currentPlayer === 1 ? 'X' : 'O'}) wins!`;
+            // You can add code here to end the game or reset the board.
+            return;
+        }
+
+        // Check if the game is a draw
+        if (checkDraw()) {
+            message.textContent = 'It\'s a draw!';
+            // You can add code here to end the game or reset the board.
+            return;
+        }
+
+        // Switch to the next player's turn
+        currentPlayer = currentPlayer === 1 ? 2 : 1;
+        message.textContent = `Move: ${currentPlayer === 1 ? 'X' : 'O'} Player ${currentPlayer}`;
+    }
+
+    function checkWin(piece, row, col) {
+        console.log('Checking for win...')
+        // Implement your win condition logic here
+        // You need to check rows, columns, and diagonals to see if they contain the same piece.
+        // Return true if the current player has won, otherwise return false.
+        // You can use nested for loops to check rows, columns, and diagonals.
+        // Example win conditions:
+        // - Horizontal: [X, X, X] or [O, O, O]
+        // - Vertical: [X, X, X] or [O, O, O]
+        // - Diagonal: [X, X, X] or [O, O, O]
+    
+        // You can implement this logic as a separate function and call it from handleCellClick.
+    }
+
+    function checkDraw() {
+        console.log('Checking for draw...')
+        // Implement your draw condition logic here
+        // Check if all cells are occupied and no player has won.
+        // Return true if it's a draw, otherwise return false.
+        // You can use nested for loops to iterate through all cells.
+    
+        // You can implement this logic as a separate function and call it from handleCellClick.
+    }
+    
+
+    }
           // Report game engine status
           console.log('Engine: Nominal'); 
-        }
-         
-    }
-}
 
+}
 
 
