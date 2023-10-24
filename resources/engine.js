@@ -27,6 +27,23 @@ function loadEngine() {
         boardState: [],
         gameEnded: false,
     };
+
+    // Create character objects for both players
+
+    let player1Name;
+    let player1Piece;
+    let player2Name;
+    let player2Piece;
+
+    const player1 = {
+        name: player1Name,
+        piece: player1Piece,
+    };
+                
+    const player2 = {
+        name: player2Name,
+        piece: player2Piece,
+    };
     
     if (!gameTray) {
         console.error("gameTray element not found");
@@ -70,12 +87,12 @@ function loadEngine() {
 
         // Create input elements for player names and choices
         const player1NameIn = document.createElement("input");
-        player1NameIn.placeholder = "Enter Player 1's name";
+        player1NameIn.placeholder = "Player 1";
         const player1Choice = document.createElement("select");
         player1Choice.innerHTML = '<option value="x">X</option><option value="o">O</option>';
 
         const player2NameIn = document.createElement("input");
-        player2NameIn.placeholder = "Enter Player 2's name";
+        player2NameIn.placeholder = "Player 2";
         const player2Choice = document.createElement("select");
         player2Choice.innerHTML = '<option value="x">X</option><option value="o" selected>O</option>';
 
@@ -96,13 +113,18 @@ function loadEngine() {
         
             // Check if inputs are valid
             if (!player1Name || !player2Name) {
-                alert("Both players must enter their names.");
+                alert("Enter player name.");
                 return;
             }
                 // Now you have player names and choices, continue with the game setup
                 gameState.player1 = { name: player1Name, piece: player1Piece };
                 gameState.player2 = { name: player2Name, piece: player2Piece };
-                gameState.currentPlayer = 1;
+                                
+                if (player1Piece === 'x') {
+                    gameState.currentPlayer = 1; // Player 1 (X) goes first
+                } else {
+                    gameState.currentPlayer = 2; // Player 2 (O) goes first
+                }
                 gameState.boardState = initializeBoard();
                 gameState.gameEnded = false;
 
@@ -111,7 +133,7 @@ function loadEngine() {
                 playButton.style.display = "none";
                 message.textContent = "Players confirmed"
 
-                runGame();
+                runGame(player1Name, player1Piece, player2Name, player2Piece);
             });
 
         // Add the playerInputsDiv and playButton to the gamePanel
@@ -156,50 +178,118 @@ function loadEngine() {
     }
 
 
-    // Game logic
+    // Game starting logic
     function runGame(player1Name, player1Piece, player2Name, player2Piece) {
-        console.log(player1Piece, player1Name)
-        console.log(player2Piece, player2Name)  
+        console.log("player1Piece:", player1Piece);
+        console.log("player1Name:", player1Name);
+        console.log("player2Piece:", player2Piece);
+        console.log("player2Name:", player2Name);  
         // Update game message
         if (message) {
             message.textContent = `Move: ${gameState.player1.piece} ${gameState.player1.name}`;
         }
-
-        // Create character objects for both players
-        const player1 = {
-            name: player1Name,
-            piece: player1Piece,
-        };
-                    
-        const player2 = {
-            name: player2Name,
-            piece: player2Piece,
-        };
         
         if (board) {
             // Clear the board and create a grid of cells
             board.innerHTML = '';
             createBoard();
+        };
+
+        if (player2Name === "AI" && gameState.currentPlayer === 2) {
+            // It's the AI's turn
+            console.log("AI starts");
+            setTimeout(() => {
+                aiMove(gameState.player1, gameState.player2, player1Piece, player2Piece);
+            }, 1000); // Provide player1 and player2 objects // Provide player1 and player2 objects
+        };
+    }
+
+    // AI logic
+    function aiMove(player1, player2, player1Piece, player2Piece) {
+        console.log('AI move initialized');
+
+        // First, check for a win opportunity for the AI
+        const winMove = findWinningMove(gameState.boardState, player2.piece);
+        if (winMove) {
+            const { row, col } = winMove;
+            makeMove(row, col);
+            return;
+        }
+    
+        // If no winning move, check for a blocking move for the player 1
+        const blockMove = findWinningMove(gameState.boardState, player1.piece);
+        if (blockMove) {
+            const { row, col } = blockMove;
+            makeMove(row, col);
+            return;
+        }
+    
+        // If no winning or blocking move, choose a random empty cell
+        const emptyCells = findEmptyCells(gameState.boardState);
+        if (emptyCells.length > 0) {
+            const randomIndex = Math.floor(Math.random() * emptyCells.length);
+            const { row, col } = emptyCells[randomIndex];
+            makeMove(row, col);
+        }
+    }
+
+    function findWinningMove(board, piece) {
+        console.log('AI applying strategy...')
+        // Check for a winning move in rows, columns, and diagonals
+        for (let i = 0; i < gridSize; i++) {
+            for (let j = 0; j < gridSize; j++) {
+                if (board[i][j] === null) {
+                    board[i][j] = piece;
+                    if (checkWin(2, i, j)) {
+                        board[i][j] = null; // Reset the board state
+                        return { row: i, col: j };
+                    }
+                    board[i][j] = null; // Reset the board state
+                }
+            }
+        }
+        return null;
+    }
+    
+    function makeMove(row, col) {
+        console.log('AI moving...')
+        // Simulate a click on the chosen cell
+        const cell = document.querySelector(`[data-row="${row}"][data-col="${col}"]`);
+        handleCellClick({ target: cell });
+    }
+
+    function findEmptyCells(board) {
+        console.log('AI scanning...')
+        
+        const emptyCells = [];
+
+        for (let row = 0; row < gridSize; row++) {
+            for (let col = 0; col < gridSize; col++) {
+                if (board[row][col] === null) {
+                    emptyCells.push({ row, col });
+                }
+            }
         }
 
-        if (message) {
-        message.textContent = "Move:" + " " + player1Piece + " " + player1Name
-        }
-        console.log('Game ready')
+        return emptyCells;
     }
 
     function handleCellClick(event) {
-        console.log('clicking cell...')
+        console.log('clicking cell...');
+        console.log("player1Piece:", gameState.player1.piece);
+        console.log("player1Name:", gameState.player1.name);
+        console.log("player2Piece:", gameState.player2.piece);
+        console.log("player2Name:", gameState.player2.name);  
+
+        const cell = event.target;
+        const row = cell.dataset.row;
+        const col = cell.dataset.col;
 
         // Check if the game has ended
         if (gameState.gameEnded) {
             return;
         }
         
-        const cell = event.target;
-        const row = cell.dataset.row;
-        const col = cell.dataset.col;
-
         // Check if the cell is already occupied
         if (gameState.boardState[row][col] !== null) {
             return; // Cell is already occupied, do nothing
@@ -225,15 +315,31 @@ function loadEngine() {
             return;
         }
 
+        console.log('Before switching turn. gameState.currentPlayer:', gameState.currentPlayer);
+
         // Switch to the next player's turn
         gameState.currentPlayer = gameState.currentPlayer === 1 ? 2 : 1;
         message.textContent = `Move: ${gameState.currentPlayer === 1 ? gameState.player1.piece : gameState.player2.piece} ${gameState.currentPlayer === 1 ? gameState.player1.name : gameState.player2.name}`;
+
+        console.log('After switching turn. gameState.currentPlayer:', gameState.currentPlayer);
+        console.log("player1Piece:", gameState.player1.piece);
+        console.log("player1Name:", gameState.player1.name);
+        console.log("player2Piece:", gameState.player2.piece);
+        console.log("player2Name:", gameState.player2.name);
+
+        if (gameState.player2.name === "AI" && gameState.currentPlayer === 2) {
+            // It's the AI's turn
+            console.log("AI's turn")
+            setTimeout(() => {
+                aiMove(gameState.player1, gameState.player2, gameState.player1.piece, gameState.player2.piece);
+            }, 1000); // Provide player1 and player2 objects
+        }
     }
 
-        function checkWin(player, row, col) {
-            console.log('Checking for win...')
+    function checkWin(player, row, col) {
+        console.log('Checking for win...')
 
-            // Check for a win in the row
+        // Check for a win in the row
         for (let i = 0; i < gridSize; i++) {
             if (gameState.boardState[row][i] !== player) {
                 break; // If a cell in the row doesn't match, no win in this row
